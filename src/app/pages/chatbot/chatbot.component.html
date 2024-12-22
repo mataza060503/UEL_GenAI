@@ -1,3 +1,44 @@
-<p>
-  chatbot works!
-</p>
+<div class="wrapper">
+  <div class="container">
+    <div class="chat">
+      <ng-container *ngIf="messages.length == 0">
+        <div class="introduction">
+          <div class="introduction-logo">
+            <img src="../assets/images/UEL_logo_long.jpg" alt="">
+          </div>
+          <p>UEL Generative AI</p>
+        </div>
+      </ng-container>
+      <ng-container *ngFor="let item of messages">
+        <div class="user" *ngIf="item.User">
+          <p class="user-question">{{item.User}}</p>
+        </div>
+        <div class="system" *ngIf="item.System">
+          <div class="system-logo">
+            <img src="../assets/images/UEL_logo.png" alt="">
+          </div>
+          <p class="system-response">{{item.System}}</p>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="isResponding">
+        <div class="user">
+          <p class="user-question">{{formGroup.controls['query'].getRawValue()}}</p>
+        </div>
+        <div class="system">
+          <div class="system-logo">
+            <img src="../assets/images/UEL_logo.png" alt="">
+          </div>
+          <div class="system-loading">
+            <app-loading></app-loading>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container>
+        <form class="chat-prompt" [formGroup]="formGroup">
+          <input type="text" name="prompt" id="prompt" placeholder="Ask everything you need!" formControlName="query">
+          <button type="submit" (click)="prompt()">Ask</button>
+        </form>
+      </ng-container>
+    </div>
+  </div>
+</div>

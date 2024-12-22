@@ -6,16 +6,20 @@ import { AppComponent } from './app.component';
 
 import { AppLayoutModule } from './layout/app.layout.module';
 import { PagesModule } from './pages/pages.module';
+import { ComponentsModule } from './components/components.module';
+
+/** PrimeNg components */
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     AppLayoutModule,
-    PagesModule
+    PagesModule,
+    ComponentsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
