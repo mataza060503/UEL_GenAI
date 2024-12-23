@@ -1,6 +1,8 @@
 import { OnInit } from '@angular/core';
 import { Component } from '@angular/core';
 import { LayoutService } from './service/app.layout.service';
+import { DataService } from '../services/Data.service';
+import { ChatHistory } from '../models/chat';
 
 @Component({
     selector: 'app-menu',
@@ -9,11 +11,74 @@ import { LayoutService } from './service/app.layout.service';
 export class AppMenuComponent implements OnInit {
 
     model: any[] = [];
+    models: any[] = [];
+    yesterday: any[] = [];
+    week: any[] = [];
+    month: any[] = [];
 
-    constructor(public layoutService: LayoutService) { }
+    chat_history: ChatHistory[] = [];
+
+    constructor(public layoutService: LayoutService, private dataService: DataService) { }
 
     ngOnInit() {
-        this.model = [
+        this.dataService.getChatHistory("6763dca395ad1cb11cc18a36").subscribe({
+            next: (data) => {
+                this.chat_history = data;
+                this.chat_history.forEach(chat => {
+                    const item = {
+                        label: chat.Title,
+                        icon: "pi pi-fw pi-comments",
+                        routerLink: [`/${chat._id}`]
+                    }
+        
+                    const chatDate = new Date(chat.UpdateAt);
+                    const now = new Date();
+                    const diffInMilliseconds = now.getTime() - chatDate.getTime();
+                    const diffInDays = diffInMilliseconds / (1000 * 60 * 60 * 24);
+        
+                    // Categorize based on the day difference
+                    if (diffInDays <= 1) {
+                    this.yesterday.push(item); // Within the last day
+                    } else if (diffInDays > 1 && diffInDays <= 7) {
+                    this.week.push(item); // Between 1 and 7 days
+                    } else {
+                    this.month.push(item); // More than 7 days ago
+                    }
+                });
+
+                if (this.yesterday.length > 0) {
+                    this.model.push(
+                        {
+                            label: "Yesterday",
+                            items: this.yesterday
+                        }
+                    )
+                }
+
+                if (this.week.length > 0) {
+                    this.model.push(
+                        {
+                            label: "7 days ago",
+                            items: this.week
+                        }
+                    )
+                }
+
+                if (this.month.length > 0) {
+                    this.model.push(
+                        {
+                            label: "30 days ago",
+                            items: this.month
+                        }
+                    )
+                }
+            },
+            error: (err) => console.log(err)
+        });
+        
+        
+
+        this.models = [
             {
                 label: 'Home',
                 items: [
