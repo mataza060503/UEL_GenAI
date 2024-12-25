@@ -1,6 +1,6 @@
 <div class="wrapper">
   <div class="container">
-    <div class="chat">
+    <div class="chat" #chat>
       <ng-container *ngIf="messages.length == 0">
         <div class="introduction">
           <div class="introduction-logo">
@@ -22,7 +22,7 @@
       </ng-container>
       <ng-container *ngIf="isResponding">
         <div class="user">
-          <p class="user-question">{{formGroup.controls['query'].getRawValue()}}</p>
+          <p class="user-question">{{pendingPrompt}}</p>
         </div>
         <div class="system">
           <div class="system-logo">
@@ -35,7 +35,7 @@
       </ng-container>
       <ng-container>
         <form class="chat-prompt" [formGroup]="formGroup">
-          <input type="text" name="prompt" id="prompt" placeholder="Ask everything you need!" formControlName="query">
+          <input type="text" name="prompt" id="prompt" placeholder="Ask everything you need!" formControlName="message">
           <button type="submit" (click)="prompt()">Ask</button>
         </form>
       </ng-container>

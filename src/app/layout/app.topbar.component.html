@@ -1,16 +1,18 @@
 <div class="layout-topbar">
-    <a class="layout-topbar-logo" routerLink="">
-        <img src="assets/images/UEL_logo.png" alt="logo">
-        <span style="color: #0E4E8C;font-weight: 600;">UEL Generative AI</span>
-    </a>
-
-    <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
+    <button #menubutton style="margin: 0px 28px 0px 0px;" class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
         <i class="pi pi-bars"></i>
     </button>
 
     <button #topbarmenubutton class="p-link layout-topbar-menu-button layout-topbar-button" (click)="layoutService.showProfileSidebar()">
         <i class="pi pi-ellipsis-v"></i>
     </button>
+
+    <a class="layout-topbar-logo" routerLink="">
+        <img src="assets/images/UEL_logo.png" alt="logo">
+        <span style="color: #0E4E8C;font-weight: 600;">UEL Generative AI</span>
+    </a>
+
+    
 
     <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
         <button class="p-link layout-topbar-button">
