@@ -3,10 +3,14 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ChatMessage } from '../../models/message';
 import { DataService } from '../../services/Data.service';
 import { ChatHistory } from '../../models/chat';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GenAIService } from '../../services/GenAI.service';
 import { Prompt } from '../../models/prompt';
 import { ChangeDetectorRef } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { firstValueFrom } from 'rxjs';
+import { Location } from '@angular/common'; // Import Location
+
 
 
 @Component({
@@ -31,8 +35,10 @@ export class ChatbotComponent implements OnInit, AfterViewInit {
   constructor(
     private dataService: DataService,
     private route: ActivatedRoute,
+    private router: Router,
     private genAI: GenAIService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private location: Location
   ) { }
 
   ngOnInit() {
@@ -49,30 +55,57 @@ export class ChatbotComponent implements OnInit, AfterViewInit {
     this.scrollToBottom();
   }
 
-  prompt() {
-    if (this.isResponding) return
+  async prompt() {
+    const formData = this.formGroup.getRawValue()
 
+    if (this.messages.length == 0) {
+      const chatHistory = {
+        accountId: "6763dca395ad1cb11cc18a36",
+        title: formData.message
+      };
+
+      try {
+        const data = await firstValueFrom(this.dataService.postChatHistory(chatHistory));
+        if (data?.id) {
+          this.location.replaceState(`/${data.id}`);
+          this.chatId = data.id; // Update the chatId for subsequent API calls
+          this.ask()
+        }
+      } catch (err) {
+        console.log(err);
+        return;
+      }
+    } else {
+      this.ask()
+    }
+
+    if (this.isResponding) return
+  }
+
+  async ask() {
     const formData = this.formGroup.getRawValue()
     var prompt = new Prompt(formData)
-    prompt.ChatId = this.chatId
-    
+
     if (formData.message != null && formData.message != undefined) {
       this.isResponding = true
       this.pendingPrompt = formData.message
+      prompt.ChatId = this.chatId
 
-      this.genAI.prompt(prompt).subscribe({
-        next: (data) => {
-          if (data.response && this.chatId) {
-            this.loadData(this.chatId)
-            this.isResponding = false
-          }
-        },
-        error: (err) => console.log(err)
-      })
+      try {
+        const data = await firstValueFrom(this.genAI.prompt(prompt));
+        if (data.response && this.chatId) {
+          await this.loadData(this.chatId); // Ensure messages are loaded after the response
+          console.log(this.messages)
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        this.isResponding = false; // Reset the responding state
+      }
     }
   }
 
-  loadData(chatId: string) {
+  async loadData(chatId: string) {
     this.dataService.getMessage(chatId).subscribe({
       next: (data) => {
         this.messages = data

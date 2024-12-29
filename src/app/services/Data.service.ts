@@ -30,6 +30,20 @@ export class DataService {
       catchError(this.handleError)
     )
   }
+  postChatHistory(body: any):Observable<any> {
+    const headers=new HttpHeaders().set("Content-Type","application/json;charset=utf8")
+    const requestOptions:Object={
+      headers:headers,
+      responseType:"text"
+    } 
+    return this._http.post<any>(this.API+"/chat/",body,requestOptions).pipe(
+      map((res) => {
+        return JSON.parse(res);
+      }),
+      retry(3),
+      catchError(this.handleError)
+    )
+  }
   //** */
 
   /** MESSAGE */

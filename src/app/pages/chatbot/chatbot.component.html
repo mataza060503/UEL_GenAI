@@ -35,7 +35,7 @@
       </ng-container>
       <ng-container>
         <form class="chat-prompt" [formGroup]="formGroup">
-          <input type="text" name="prompt" id="prompt" placeholder="Ask everything you need!" formControlName="message">
+          <input type="text" name="prompt" id="prompt" autocomplete="off" placeholder="Ask everything you need!" formControlName="message">
           <button type="submit" (click)="prompt()">Ask</button>
         </form>
       </ng-container>

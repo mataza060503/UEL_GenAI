@@ -6,9 +6,9 @@ export class ChatHistory {
   UpdateAt: Date;
 
   constructor(data: any) {
-    this._id = data._id;
-    this.AccountId = data.AccountId;
-    this.Title = data.Title;
+    this._id = data._id || null;
+    this.AccountId = data.AccountId || null;
+    this.Title = data.Title || null;
     this.CreateAt = new Date(data.CreateAt);
     this.UpdateAt = new Date(data.UpdateAt);
   }
