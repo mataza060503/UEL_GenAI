@@ -90,12 +90,12 @@ export class ChatbotComponent implements OnInit, AfterViewInit {
       this.isResponding = true
       this.pendingPrompt = formData.message
       prompt.ChatId = this.chatId
+      this.formGroup.controls['message'].setValue("")
 
       try {
         const data = await firstValueFrom(this.genAI.prompt(prompt));
         if (data.response && this.chatId) {
           await this.loadData(this.chatId); // Ensure messages are loaded after the response
-          console.log(this.messages)
         }
       } catch (err) {
         console.log(err);
@@ -120,10 +120,8 @@ export class ChatbotComponent implements OnInit, AfterViewInit {
   scrollToBottom() {
     setTimeout(() => {
       if (this.scrollContainer) {
-        console.log('Scrolling to bottom');
         this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
       } else {
-        console.log('scrollContainer is undefined');
       }
     }, 100); // Delay ensures DOM is fully rendered
   }
