@@ -10,6 +10,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { firstValueFrom } from 'rxjs';
 import { Location } from '@angular/common'; // Import Location
+import { RefreshService } from '../../services/refresh.service';
 
 
 
@@ -26,6 +27,8 @@ export class ChatbotComponent implements OnInit, AfterViewInit {
   messages: ChatMessage[] = [];
   chat_history: ChatHistory[] = [];
 
+  userId: any;
+
   isResponding = false;
   formGroup = new FormGroup({
     message: new FormControl(),
@@ -38,8 +41,14 @@ export class ChatbotComponent implements OnInit, AfterViewInit {
     private router: Router,
     private genAI: GenAIService,
     private cdr: ChangeDetectorRef,
-    private location: Location
-  ) { }
+    private location: Location,
+    private menuRefreshService: RefreshService
+  ) {
+    const user = localStorage.getItem("user")
+        if (user) {
+            this.userId = JSON.parse(user).uid
+        }
+  }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -60,9 +69,11 @@ export class ChatbotComponent implements OnInit, AfterViewInit {
 
     if (this.messages.length == 0) {
       const chatHistory = {
-        accountId: "6763dca395ad1cb11cc18a36",
+        accountId: this.userId,
         title: formData.message
       };
+
+      console.log(chatHistory)
 
       try {
         const data = await firstValueFrom(this.dataService.postChatHistory(chatHistory));
@@ -70,6 +81,8 @@ export class ChatbotComponent implements OnInit, AfterViewInit {
           this.location.replaceState(`/${data.id}`);
           this.chatId = data.id; // Update the chatId for subsequent API calls
           this.ask()
+
+          this.menuRefreshService.triggerRefresh();
         }
       } catch (err) {
         console.log(err);

@@ -11,7 +11,14 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getDatabase, provideDatabase } from '@angular/fire/database';
 
+import { AngularFireModule } from '@angular/fire/compat';
+
+import { environment } from './environment/environment';
+
+
 /** PrimeNg components */
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
 
 @NgModule({
   declarations: [
@@ -23,9 +30,12 @@ import { getDatabase, provideDatabase } from '@angular/fire/database';
     AppLayoutModule,
     PagesModule,
     ComponentsModule,
+    ButtonModule,
+    DialogModule,
+    AngularFireModule.initializeApp(environment.firebase)
   ],
   providers: [
-    provideFirebaseApp(() => initializeApp({"projectId":"gradutation-project-b8acb","appId":"1:1079223125431:web:9122e22b93878cecd45432","storageBucket":"gradutation-project-b8acb.firebasestorage.app","apiKey":"AIzaSyD4qxusAHbt5jL7I23pjrPoDvJVMnsX6LA","authDomain":"gradutation-project-b8acb.firebaseapp.com","messagingSenderId":"1079223125431","measurementId":"G-32K7QTH7L9"})),
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
     provideDatabase(() => getDatabase())
   ],
